@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#f8f7f4">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Rx Calc">
+<title>Medicine Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f7f4;
+    --surface: #ffffff;
+    --ink: #1a1a1a;
+    --ink-soft: #6b6b68;
+    --ink-faint: #a8a8a3;
+    --line: #e8e6e0;
+    --line-soft: #f0eee8;
+    --accent: #2d4a3e;
+    --accent-soft: #e8f0ec;
+    --warn: #8b4513;
+    --warn-soft: #faf0e6;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    overscroll-behavior: none;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px 40px;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  header {
+    margin-bottom: 28px;
+    padding: 0 4px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+
+  .brand-mark {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 28px;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .brand-mark em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  .brand-sub {
+    font-size: 11px;
+    color: var(--ink-faint);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .tagline {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+
+  .field:last-child { margin-bottom: 0; }
+
+  label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .hint {
+    font-size: 11px;
+    color: var(--ink-faint);
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  input[type="date"],
+  input[type="text"],
+  input[type="number"] {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 17px;
+    color: var(--ink);
+    transition: border-color 0.15s, background 0.15s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  input[type="date"] {
+    font-family: 'Inter', sans-serif;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: #fefefe;
+  }
+
+  input::placeholder {
+    color: var(--ink-faint);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+  }
+
+  /* Pills-per-day: number + half-pill toggle */
+  .dose-row {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .dose-row input {
+    flex: 1;
+  }
+
+  .half-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    cursor: pointer;
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--ink-soft);
+    transition: all 0.15s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    min-width: 56px;
+  }
+
+  .half-toggle:active { transform: scale(0.97); }
+
+  .half-toggle.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+
+  /* Result panel */
+  .result {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 28px 24px;
+    text-align: center;
+    position: relative;
+  }
+
+  .result.empty {
+    background: var(--surface);
+    color: var(--ink-faint);
+    border: 1px dashed var(--line);
+    padding: 36px 24px;
+  }
+
+  .result-label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .result-number {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 64px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
+  }
+
+  .result-unit {
+    font-size: 14px;
+    opacity: 0.8;
+    font-weight: 400;
+  }
+
+  .result-empty-msg {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink-faint);
+  }
+
+  /* Breakdown */
+  .breakdown {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255,255,255,0.18);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 12px;
+    text-align: left;
+  }
+
+  .breakdown-item {
+    font-size: 12px;
+  }
+
+  .breakdown-key {
+    opacity: 0.7;
+    margin-bottom: 2px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .breakdown-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .warning-banner {
+    margin-top: 16px;
+    padding: 10px 14px;
+    background: var(--warn-soft);
+    color: var(--warn);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    line-height: 1.5;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .warning-banner::before {
+    content: '!';
+    font-weight: 600;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--warn);
+    color: var(--warn-soft);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Footer actions */
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  button.btn {
+    flex: 1;
+    padding: 14px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button.btn:active { transform: scale(0.98); }
+  button.btn:hover { color: var(--ink); border-color: var(--ink-faint); }
+
+  /* Hide spinner on number inputs */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] { -moz-appearance: textfield; }
+
+  /* Dose preview text */
+  .dose-preview {
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-top: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 14px;
+  }
+
+  /* Subtle entrance */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .result:not(.empty) {
+    animation: fadeUp 0.25s ease-out;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="brand">
+      <div class="brand-mark">Rx <em>Calc</em></div>
+      <div class="brand-sub">v1</div>
+    </div>
+    <p class="tagline">Calculate pills to dispense until next visit.</p>
+  </header>
+
+  <div class="card">
+    <div class="field">
+      <label for="today">
+        Today
+        <span class="hint">visit date</span>
+      </label>
+      <input type="date" id="today">
+    </div>
+
+    <div class="field">
+      <label for="next">
+        Next appointment
+        <span class="hint">inclusive</span>
+      </label>
+      <input type="date" id="next">
+    </div>
+
+    <div class="field">
+      <label for="remaining">
+        Pills remaining
+        <span class="hint">whole pills</span>
+      </label>
+      <input type="text" inputmode="numeric" pattern="[0-9]*" id="remaining" placeholder="0">
+    </div>
+
+    <div class="field">
+      <label for="perday">
+        Pills per day
+        <span class="hint">tap ½ for half-pill</span>
+      </label>
+      <div class="dose-row">
+        <input type="text" inputmode="numeric" pattern="[0-9]*" id="perday" placeholder="0">
+        <button type="button" class="half-toggle" id="halfBtn" aria-pressed="false">½</button>
+      </div>
+      <div class="dose-preview" id="dosePreview"></div>
+    </div>
+  </div>
+
+  <div class="card result empty" id="resultCard">
+    <div class="result-empty-msg" id="resultEmpty">Enter values to calculate</div>
+    <div id="resultContent" style="display:none;">
+      <div class="result-label">Dispense today</div>
+      <div class="result-number" id="resultNumber">0</div>
+      <div class="result-unit">pills · rounded up to nearest 10</div>
+      <div class="breakdown">
+        <div class="breakdown-item">
+          <div class="breakdown-key">Days covered</div>
+          <div class="breakdown-val" id="bDays">—</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="breakdown-key">Pills needed</div>
+          <div class="breakdown-val" id="bNeeded">—</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="breakdown-key">Remaining</div>
+          <div class="breakdown-val" id="bRemaining">—</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="breakdown-key">Shortfall</div>
+          <div class="breakdown-val" id="bShort">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="warningSlot"></div>
+
+  <div class="actions">
+    <button class="btn" id="resetBtn">Reset</button>
+  </div>
+
+</div>
+
+<script>
+  // --- Helpers ---
+  const $ = (id) => document.getElementById(id);
+  const todayEl = $('today');
+  const nextEl = $('next');
+  const remainingEl = $('remaining');
+  const perdayEl = $('perday');
+  const halfBtn = $('halfBtn');
+  const dosePreview = $('dosePreview');
+  const resultCard = $('resultCard');
+  const resultEmpty = $('resultEmpty');
+  const resultContent = $('resultContent');
+  const resultNumber = $('resultNumber');
+  const bDays = $('bDays');
+  const bNeeded = $('bNeeded');
+  const bRemaining = $('bRemaining');
+  const bShort = $('bShort');
+  const warningSlot = $('warningSlot');
+  const resetBtn = $('resetBtn');
+
+  // Set today's date by default
+  function isoDate(d) {
+    const yr = d.getFullYear();
+    const mo = String(d.getMonth() + 1).padStart(2, '0');
+    const da = String(d.getDate()).padStart(2, '0');
+    return `${yr}-${mo}-${da}`;
+  }
+  todayEl.value = isoDate(new Date());
+
+  // Strip non-digit input on text fields used as numeric
+  function digitsOnly(el) {
+    el.addEventListener('input', () => {
+      const cleaned = el.value.replace(/[^0-9]/g, '');
+      if (cleaned !== el.value) el.value = cleaned;
+      update();
+    });
+  }
+  digitsOnly(remainingEl);
+  digitsOnly(perdayEl);
+
+  // Date change listeners
+  todayEl.addEventListener('change', update);
+  nextEl.addEventListener('change', update);
+
+  // Half-pill toggle
+  halfBtn.addEventListener('click', () => {
+    const active = halfBtn.classList.toggle('active');
+    halfBtn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    update();
+  });
+
+  // Reset
+  resetBtn.addEventListener('click', () => {
+    todayEl.value = isoDate(new Date());
+    nextEl.value = '';
+    remainingEl.value = '';
+    perdayEl.value = '';
+    halfBtn.classList.remove('active');
+    halfBtn.setAttribute('aria-pressed', 'false');
+    update();
+    nextEl.focus();
+  });
+
+  // --- Core calculation ---
+  function update() {
+    // Update dose preview
+    const dose = computeDose();
+    if (dose !== null) {
+      const display = Number.isInteger(dose) ? dose.toString() : dose.toFixed(1);
+      dosePreview.textContent = `= ${display} pills/day`;
+    } else {
+      dosePreview.textContent = '';
+    }
+
+    // Try to compute
+    const result = computeResult();
+    warningSlot.innerHTML = '';
+
+    if (!result.ok) {
+      resultCard.classList.add('empty');
+      resultEmpty.style.display = 'block';
+      resultContent.style.display = 'none';
+      if (result.warning) showWarning(result.warning);
+      return;
+    }
+
+    resultCard.classList.remove('empty');
+    resultEmpty.style.display = 'none';
+    resultContent.style.display = 'block';
+
+    resultNumber.textContent = result.dispense;
+    bDays.textContent = result.days + ' days';
+    bNeeded.textContent = formatPills(result.needed);
+    bRemaining.textContent = result.remaining + ' pills';
+    bShort.textContent = result.shortfall > 0
+      ? formatPills(result.shortfall)
+      : 'none';
+
+    if (result.warning) showWarning(result.warning);
+  }
+
+  function computeDose() {
+    const base = parseInt(perdayEl.value, 10);
+    if (isNaN(base) || base < 0) return null;
+    const half = halfBtn.classList.contains('active') ? 0.5 : 0;
+    const total = base + half;
+    if (total === 0) return null;
+    return total;
+  }
+
+  function computeResult() {
+    const today = todayEl.value;
+    const next = nextEl.value;
+    const remaining = parseInt(remainingEl.value, 10);
+    const dose = computeDose();
+
+    if (!today || !next || isNaN(remaining) || dose === null) {
+      return { ok: false };
+    }
+
+    const t = new Date(today + 'T00:00:00');
+    const n = new Date(next + 'T00:00:00');
+
+    if (n < t) {
+      return { ok: false, warning: 'Next appointment is before today. Check the dates.' };
+    }
+
+    // Inclusive of appointment day: difference in days + 1
+    const ms = n - t;
+    const days = Math.round(ms / 86400000) + 1;
+
+    const needed = days * dose;
+    const shortfall = Math.max(0, needed - remaining);
+    const dispense = Math.ceil(shortfall / 10) * 10;
+
+    let warning = null;
+    if (shortfall === 0) {
+      warning = `Patient has enough pills (${remaining}) to cover ${days} days. No dispensing needed.`;
+    }
+
+    return {
+      ok: true,
+      days, needed, remaining, shortfall, dispense, warning
+    };
+  }
+
+  function formatPills(n) {
+    return Number.isInteger(n) ? `${n} pills` : `${n.toFixed(1)} pills`;
+  }
+
+  function showWarning(msg) {
+    const div = document.createElement('div');
+    div.className = 'warning-banner';
+    div.textContent = msg;
+    warningSlot.appendChild(div);
+  }
+
+  // Initial render
+  update();
+</script>
+</body>
+</html>
