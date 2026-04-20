@@ -403,23 +403,23 @@
     <div class="field">
       <label for="next">
         <span id="lbl-next">Next appointment</span>
-        <span class="hint" id="hint-next">inclusive</span>
+        <span class="hint" id="hint-next">incl. appt date</span>
       </label>
       <input type="date" id="next">
     </div>
 
     <div class="field">
       <label for="remaining">
-        <span id="lbl-remaining">Pills remaining</span>
-        <span class="hint" id="hint-remaining">whole pills</span>
+        <span id="lbl-remaining">Tablets remaining</span>
+        <span class="hint" id="hint-remaining">whole tablets</span>
       </label>
       <input type="text" inputmode="numeric" pattern="[0-9]*" id="remaining" placeholder="0">
     </div>
 
     <div class="field">
       <label for="perday">
-        <span id="lbl-perday">Pills per day</span>
-        <span class="hint" id="hint-perday">tap ½ for half-pill</span>
+        <span id="lbl-perday">Tablets per day</span>
+        <span class="hint" id="hint-perday">tap ½ for half-tablet</span>
       </label>
       <div class="dose-row">
         <input type="text" inputmode="numeric" pattern="[0-9]*" id="perday" placeholder="0">
@@ -434,18 +434,18 @@
     <div id="resultContent" style="display:none;">
       <div class="result-label" id="resultLabel">To give</div>
       <div class="result-number" id="resultNumber">0</div>
-      <div class="result-unit" id="resultUnit">pills</div>
+      <div class="result-unit" id="resultUnit">tablets</div>
       <div class="breakdown">
         <div class="breakdown-item">
           <div class="breakdown-key" id="bDaysKey">Days covered</div>
           <div class="breakdown-val" id="bDays">—</div>
         </div>
         <div class="breakdown-item">
-          <div class="breakdown-key" id="bNeededKey">Pills needed</div>
+          <div class="breakdown-key" id="bNeededKey">Total for period</div>
           <div class="breakdown-val" id="bNeeded">—</div>
         </div>
         <div class="breakdown-item">
-          <div class="breakdown-key" id="bRemainingKey">Already has</div>
+          <div class="breakdown-key" id="bRemainingKey">Tablets remaining</div>
           <div class="breakdown-val" id="bRemaining">—</div>
         </div>
       </div>
@@ -465,21 +465,21 @@
   const LANG = {
     en: {
       lblToday: 'Today',         hintToday: 'visit date',
-      lblNext: 'Next appointment', hintNext: 'inclusive',
-      lblRemaining: 'Pills remaining', hintRemaining: 'whole pills',
-      lblPerday: 'Pills per day', hintPerday: 'tap ½ for half-pill',
+      lblNext: 'Next appointment', hintNext: 'incl. appt date',
+      lblRemaining: 'Tablets remaining', hintRemaining: 'whole tablets',
+      lblPerday: 'Tablets per day', hintPerday: 'tap ½ for half-tablet',
       emptyMsg: 'Enter values to calculate',
       resultLabel: 'To give',
-      resultUnit: 'pills',
+      resultUnit: 'tablets',
       bDaysKey: 'Days covered',
-      bNeededKey: 'Pills needed',
-      bRemainingKey: 'Already has',
+      bNeededKey: 'Total for period',
+      bRemainingKey: 'Tablets remaining',
       dayUnit: 'days',
-      pillUnit: 'pills',
-      doseUnit: 'pills/day',
+      pillUnit: 'tablets',
+      doseUnit: 'tab/day',
       resetBtn: 'Reset',
       warnDateOrder: 'Next appointment is before today. Check the dates.',
-      warnEnough: (rem, days) => `Patient has enough pills (${rem}) to cover ${days} days. No dispensing needed.`,
+      warnEnough: (rem, days) => `Patient has enough tablets (${rem}) to cover ${days} days. No dispensing needed.`,
     },
     th: {
       lblToday: 'วันนี้',           hintToday: 'วันที่มาพบแพทย์',
@@ -490,8 +490,8 @@
       resultLabel: 'ให้ยา',
       resultUnit: 'เม็ด',
       bDaysKey: 'จำนวนวัน',
-      bNeededKey: 'ยาที่ต้องการ',
-      bRemainingKey: 'มีอยู่แล้ว',
+      bNeededKey: 'ยาทั้งหมดที่ต้องการ',
+      bRemainingKey: 'ยาที่เหลืออยู่',
       dayUnit: 'วัน',
       pillUnit: 'เม็ด',
       doseUnit: 'เม็ด/วัน',
