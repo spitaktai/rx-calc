@@ -54,6 +54,33 @@
   header {
     margin-bottom: 12px;
     padding: 0 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .lang-btn {
+    padding: 8px 18px;
+    border: 1.5px solid var(--line);
+    background: var(--surface);
+    border-radius: 20px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+
+  .lang-btn:active { transform: scale(0.95); }
+
+  .lang-btn.th {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
   }
 
   .brand {
@@ -361,38 +388,38 @@
       <div class="brand-mark">Rx <em>Calc</em></div>
       <div class="brand-sub">v1</div>
     </div>
-    <p class="tagline">Calculate pills to dispense until next visit.</p>
+    <button class="lang-btn" id="langBtn">TH</button>
   </header>
 
   <div class="card">
     <div class="field">
       <label for="today">
-        Today
-        <span class="hint">visit date</span>
+        <span id="lbl-today">Today</span>
+        <span class="hint" id="hint-today">visit date</span>
       </label>
       <input type="date" id="today">
     </div>
 
     <div class="field">
       <label for="next">
-        Next appointment
-        <span class="hint">inclusive</span>
+        <span id="lbl-next">Next appointment</span>
+        <span class="hint" id="hint-next">inclusive</span>
       </label>
       <input type="date" id="next">
     </div>
 
     <div class="field">
       <label for="remaining">
-        Pills remaining
-        <span class="hint">whole pills</span>
+        <span id="lbl-remaining">Pills remaining</span>
+        <span class="hint" id="hint-remaining">whole pills</span>
       </label>
       <input type="text" inputmode="numeric" pattern="[0-9]*" id="remaining" placeholder="0">
     </div>
 
     <div class="field">
       <label for="perday">
-        Pills per day
-        <span class="hint">tap ½ for half-pill</span>
+        <span id="lbl-perday">Pills per day</span>
+        <span class="hint" id="hint-perday">tap ½ for half-pill</span>
       </label>
       <div class="dose-row">
         <input type="text" inputmode="numeric" pattern="[0-9]*" id="perday" placeholder="0">
@@ -405,20 +432,20 @@
   <div class="card result empty" id="resultCard">
     <div class="result-empty-msg" id="resultEmpty">Enter values to calculate</div>
     <div id="resultContent" style="display:none;">
-      <div class="result-label">To give</div>
+      <div class="result-label" id="resultLabel">To give</div>
       <div class="result-number" id="resultNumber">0</div>
-      <div class="result-unit">pills</div>
+      <div class="result-unit" id="resultUnit">pills</div>
       <div class="breakdown">
         <div class="breakdown-item">
-          <div class="breakdown-key">Days covered</div>
+          <div class="breakdown-key" id="bDaysKey">Days covered</div>
           <div class="breakdown-val" id="bDays">—</div>
         </div>
         <div class="breakdown-item">
-          <div class="breakdown-key">Pills needed</div>
+          <div class="breakdown-key" id="bNeededKey">Pills needed</div>
           <div class="breakdown-val" id="bNeeded">—</div>
         </div>
         <div class="breakdown-item">
-          <div class="breakdown-key">Already has</div>
+          <div class="breakdown-key" id="bRemainingKey">Already has</div>
           <div class="breakdown-val" id="bRemaining">—</div>
         </div>
       </div>
@@ -434,6 +461,69 @@
 </div>
 
 <script>
+  // --- Translations ---
+  const LANG = {
+    en: {
+      lblToday: 'Today',         hintToday: 'visit date',
+      lblNext: 'Next appointment', hintNext: 'inclusive',
+      lblRemaining: 'Pills remaining', hintRemaining: 'whole pills',
+      lblPerday: 'Pills per day', hintPerday: 'tap ½ for half-pill',
+      emptyMsg: 'Enter values to calculate',
+      resultLabel: 'To give',
+      resultUnit: 'pills',
+      bDaysKey: 'Days covered',
+      bNeededKey: 'Pills needed',
+      bRemainingKey: 'Already has',
+      dayUnit: 'days',
+      pillUnit: 'pills',
+      doseUnit: 'pills/day',
+      resetBtn: 'Reset',
+      warnDateOrder: 'Next appointment is before today. Check the dates.',
+      warnEnough: (rem, days) => `Patient has enough pills (${rem}) to cover ${days} days. No dispensing needed.`,
+    },
+    th: {
+      lblToday: 'วันนี้',           hintToday: 'วันที่มาพบแพทย์',
+      lblNext: 'นัดครั้งถัดไป',     hintNext: 'รวมวันนัด',
+      lblRemaining: 'ยาที่เหลืออยู่', hintRemaining: 'เม็ดเต็ม',
+      lblPerday: 'ยาต่อวัน',        hintPerday: 'กด ½ สำหรับครึ่งเม็ด',
+      emptyMsg: 'กรอกข้อมูลเพื่อคำนวณ',
+      resultLabel: 'ให้ยา',
+      resultUnit: 'เม็ด',
+      bDaysKey: 'จำนวนวัน',
+      bNeededKey: 'ยาที่ต้องการ',
+      bRemainingKey: 'มีอยู่แล้ว',
+      dayUnit: 'วัน',
+      pillUnit: 'เม็ด',
+      doseUnit: 'เม็ด/วัน',
+      resetBtn: 'รีเซ็ต',
+      warnDateOrder: 'วันนัดอยู่ก่อนวันนี้ กรุณาตรวจสอบวันที่',
+      warnEnough: (rem, days) => `ผู้ป่วยมียาเพียงพอ (${rem} เม็ด) สำหรับ ${days} วัน ไม่จำเป็นต้องจ่ายยาเพิ่ม`,
+    }
+  };
+
+  let lang = 'en';
+  const t = () => LANG[lang];
+
+  function applyLang() {
+    $('lbl-today').textContent     = t().lblToday;
+    $('hint-today').textContent    = t().hintToday;
+    $('lbl-next').textContent      = t().lblNext;
+    $('hint-next').textContent     = t().hintNext;
+    $('lbl-remaining').textContent = t().lblRemaining;
+    $('hint-remaining').textContent= t().hintRemaining;
+    $('lbl-perday').textContent    = t().lblPerday;
+    $('hint-perday').textContent   = t().hintPerday;
+    $('resultEmpty').textContent   = t().emptyMsg;
+    $('resultLabel').textContent   = t().resultLabel;
+    $('resultUnit').textContent    = t().resultUnit;
+    $('bDaysKey').textContent      = t().bDaysKey;
+    $('bNeededKey').textContent    = t().bNeededKey;
+    $('bRemainingKey').textContent = t().bRemainingKey;
+    resetBtn.textContent           = t().resetBtn;
+    langBtn.textContent            = lang === 'en' ? 'TH' : 'EN';
+    langBtn.classList.toggle('th', lang === 'th');
+  }
+
   // --- Helpers ---
   const $ = (id) => document.getElementById(id);
   const todayEl = $('today');
@@ -451,6 +541,14 @@
   const bRemaining = $('bRemaining');
   const warningSlot = $('warningSlot');
   const resetBtn = $('resetBtn');
+  const langBtn = $('langBtn');
+
+  // Language toggle
+  langBtn.addEventListener('click', () => {
+    lang = lang === 'en' ? 'th' : 'en';
+    applyLang();
+    update();
+  });
 
   // Set today's date by default
   function isoDate(d) {
@@ -497,16 +595,14 @@
 
   // --- Core calculation ---
   function update() {
-    // Update dose preview
     const dose = computeDose();
     if (dose !== null) {
       const display = Number.isInteger(dose) ? dose.toString() : dose.toFixed(1);
-      dosePreview.textContent = `= ${display} pills/day`;
+      dosePreview.textContent = `= ${display} ${t().doseUnit}`;
     } else {
       dosePreview.textContent = '';
     }
 
-    // Try to compute
     const result = computeResult();
     warningSlot.innerHTML = '';
 
@@ -524,7 +620,7 @@
 
     const sf = result.shortfall;
     resultNumber.textContent = Number.isInteger(sf) ? sf : sf.toFixed(1);
-    bDays.textContent = result.days + ' days';
+    bDays.textContent = result.days + ' ' + t().dayUnit;
     bNeeded.textContent = formatPills(result.needed);
     bRemaining.textContent = formatPills(result.remaining);
 
@@ -550,15 +646,14 @@
       return { ok: false };
     }
 
-    const t = new Date(today + 'T00:00:00');
-    const n = new Date(next + 'T00:00:00');
+    const d1 = new Date(today + 'T00:00:00');
+    const d2 = new Date(next + 'T00:00:00');
 
-    if (n < t) {
-      return { ok: false, warning: 'Next appointment is before today. Check the dates.' };
+    if (d2 < d1) {
+      return { ok: false, warning: t().warnDateOrder };
     }
 
-    // Inclusive of appointment day: difference in days + 1
-    const ms = n - t;
+    const ms = d2 - d1;
     const days = Math.round(ms / 86400000) + 1;
 
     const needed = days * dose;
@@ -566,17 +661,15 @@
 
     let warning = null;
     if (shortfall === 0) {
-      warning = `Patient has enough pills (${remaining}) to cover ${days} days. No dispensing needed.`;
+      warning = t().warnEnough(remaining, days);
     }
 
-    return {
-      ok: true,
-      days, needed, remaining, shortfall, warning
-    };
+    return { ok: true, days, needed, remaining, shortfall, warning };
   }
 
   function formatPills(n) {
-    return Number.isInteger(n) ? `${n} pills` : `${n.toFixed(1)} pills`;
+    const u = t().pillUnit;
+    return Number.isInteger(n) ? `${n} ${u}` : `${n.toFixed(1)} ${u}`;
   }
 
   function showWarning(msg) {
