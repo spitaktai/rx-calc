@@ -597,6 +597,8 @@
   const resetBtn = $('resetBtn');
   const langBtn = $('langBtn');
 
+  let daysPerWeek = 7;
+
   // Language toggle
   langBtn.addEventListener('click', () => {
     lang = lang === 'en' ? 'th' : 'en';
@@ -635,6 +637,16 @@
     update();
   });
 
+  // Days-per-week buttons
+  document.querySelectorAll('.dpw-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      daysPerWeek = parseInt(btn.dataset.dpw, 10);
+      document.querySelectorAll('.dpw-btn').forEach(b =>
+        b.classList.toggle('active', b === btn));
+      update();
+    });
+  });
+
   // Reset
   resetBtn.addEventListener('click', () => {
     todayEl.value = isoDate(new Date());
@@ -643,6 +655,9 @@
     perdayEl.value = '';
     halfBtn.classList.remove('active');
     halfBtn.setAttribute('aria-pressed', 'false');
+    daysPerWeek = 7;
+    document.querySelectorAll('.dpw-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.dpw === '7'));
     update();
     nextEl.focus();
   });
@@ -710,7 +725,7 @@
     const ms = d2 - d1;
     const days = Math.round(ms / 86400000) + 1;
 
-    const needed = days * dose;
+    const needed = Math.ceil(days * daysPerWeek / 7) * dose;
     const shortfall = Math.max(0, needed - remaining);
 
     let warning = null;
