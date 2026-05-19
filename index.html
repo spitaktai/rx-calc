@@ -218,6 +218,38 @@
     background: var(--accent);
     color: white;
     border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft), 0 6px 16px rgba(45, 74, 62, 0.28);
+    font-weight: 600;
+  }
+
+  /* Days-per-week selector */
+  .dpw-row {
+    display: flex;
+    gap: 6px;
+  }
+
+  .dpw-btn {
+    flex: 1;
+    padding: 14px 0;
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.15s;
+  }
+
+  .dpw-btn:active { transform: scale(0.95); }
+
+  .dpw-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+    font-weight: 600;
   }
 
   /* Result panel */
