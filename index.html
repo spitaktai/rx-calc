@@ -418,7 +418,7 @@
   <header>
     <div class="brand">
       <div class="brand-mark">Rx <em>Calc</em></div>
-      <div class="brand-sub">v1.1</div>
+      <div class="brand-sub">v1.2</div>
     </div>
     <button class="lang-btn" id="langBtn">TH</button>
   </header>
@@ -461,6 +461,24 @@
     </div>
   </div>
 
+  <div class="card">
+    <div class="field">
+      <label>
+        <span id="lbl-dpw">Days per week</span>
+        <span class="hint" id="hint-dpw">default 7</span>
+      </label>
+      <div class="dpw-row">
+        <button type="button" class="dpw-btn" data-dpw="1">1</button>
+        <button type="button" class="dpw-btn" data-dpw="2">2</button>
+        <button type="button" class="dpw-btn" data-dpw="3">3</button>
+        <button type="button" class="dpw-btn" data-dpw="4">4</button>
+        <button type="button" class="dpw-btn" data-dpw="5">5</button>
+        <button type="button" class="dpw-btn" data-dpw="6">6</button>
+        <button type="button" class="dpw-btn active" data-dpw="7">7</button>
+      </div>
+    </div>
+  </div>
+
   <div class="card result empty" id="resultCard">
     <div class="result-empty-msg" id="resultEmpty">Enter values to calculate</div>
     <div id="resultContent" style="display:none;">
@@ -500,6 +518,7 @@
       lblNext: 'Next appointment', hintNext: 'incl. appt date',
       lblRemaining: 'Tablets remaining', hintRemaining: 'whole tablets',
       lblPerday: 'Tablets per day', hintPerday: 'tap ½ for half-tablet',
+      lblDpw: 'Days per week',      hintDpw: 'default 7',
       emptyMsg: 'Enter values to calculate',
       resultLabel: 'To give',
       resultUnit: 'tablets',
@@ -518,6 +537,7 @@
       lblNext: 'นัดครั้งถัดไป',     hintNext: 'รวมวันนัด',
       lblRemaining: 'ยาที่เหลืออยู่', hintRemaining: 'เม็ดเต็ม',
       lblPerday: 'ยาต่อวัน',        hintPerday: 'กด ½ สำหรับครึ่งเม็ด',
+      lblDpw: 'จำนวนวันต่อสัปดาห์', hintDpw: 'ค่าเริ่มต้น 7',
       emptyMsg: 'กรอกข้อมูลเพื่อคำนวณ',
       resultLabel: 'ให้ยา',
       resultUnit: 'เม็ด',
@@ -545,6 +565,8 @@
     $('hint-remaining').textContent= t().hintRemaining;
     $('lbl-perday').textContent    = t().lblPerday;
     $('hint-perday').textContent   = t().hintPerday;
+    $('lbl-dpw').textContent       = t().lblDpw;
+    $('hint-dpw').textContent      = t().hintDpw;
     $('resultEmpty').textContent   = t().emptyMsg;
     $('resultLabel').textContent   = t().resultLabel;
     $('resultUnit').textContent    = t().resultUnit;
